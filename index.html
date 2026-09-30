@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Corentin Janson — Ex_Luna</title>
+    <meta name="description" content="Portfolio de Corentin Janson (Ex_Luna), ingénieur IT : robotique industrielle, Rust, C++, Three.js, Tauri. Un système solaire en ASCII piloté comme Neovim." />
+    <meta property="og:title" content="Corentin Janson — Ex_Luna" />
+    <meta property="og:description" content="IT engineer · robotics, Rust, C++, Three.js. An ASCII solar system you can drive like Neovim." />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#05080a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Scène 3D : la Lune et les projets en orbite, rendus en ASCII"></canvas>
+    <div id="labels"></div>
+
+    <header class="hud-top">
+      <div class="brand">
+        <h1 class="name">Corentin Janson</h1>
+        <div class="handle"><span class="acc">Ex_Luna</span> <span class="dim">//</span> <span class="hud-target"></span></div>
+      </div>
+      <nav class="nav" aria-label="Navigation">
+        <button data-nav="home" data-i18n="nav.home">Accueil</button>
+        <div class="menu-wrap">
+          <button data-nav="projects" aria-haspopup="true"><span data-i18n="nav.projects">Projets</span> ▾</button>
+          <div class="menu" hidden></div>
+        </div>
+        <button data-nav="about" data-i18n="nav.about">À propos</button>
+        <button data-nav="contact" data-i18n="nav.contact">Contact</button>
+        <button data-nav="terminal" data-i18n="nav.terminal">Terminal</button>
+        <button data-nav="lang" class="lang">EN</button>
+      </nav>
+    </header>
+
+    <div class="hints">
+      <div data-i18n="hint.mouse"></div>
+      <div data-i18n="hint.keys"></div>
+    </div>
+
+    <div class="pager"></div>
+
+    <section id="term" class="term" aria-label="Terminal">
+      <header class="term-bar">
+        <span class="title">exluna@luna: ~</span>
+        <div class="actions">
+          <button data-act="min" aria-label="minimize">_</button>
+          <button data-act="max" aria-label="maximize">□</button>
+          <button data-act="close" aria-label="close">×</button>
+        </div>
+      </header>
+      <div class="term-out" role="log" aria-live="polite"></div>
+      <form class="term-in" autocomplete="off">
+        <label class="prompt" for="term-input"></label>
+        <input id="term-input" spellcheck="false" autocapitalize="off" aria-label="commande" />
+      </form>
+    </section>
+
+    <footer class="statusline" data-mode="normal">
+      <span class="mode">-- NORMAL --</span>
+      <span class="path">~/luna</span>
+      <form class="cmdline" hidden autocomplete="off"><span class="prefix">:</span><input spellcheck="false" autocapitalize="off" aria-label="ligne de commande" /></form>
+      <span class="msg"></span>
+      <span class="info"></span>
+    </footer>
+
+    <noscript>
+      <main style="padding:2rem;font-family:monospace;color:#ddd;background:#05080a">
+        <h1>Corentin Janson — Ex_Luna</h1>
+        <p>Ingénieur IT · robotique industrielle, Rust, C++20, TypeScript, Three.js.</p>
+        <ul>
+          <li><a href="https://github.com/ExLuna-rs/G-Lib">G-Lib</a> — bibliothèque de jeux unifiée.</li>
+          <li><a href="https://github.com/ExLuna-rs/herdr-auto-layout">herdr-auto-layout</a> — plugin herdr en Rust.</li>
+        </ul>
+        <p><a href="https://github.com/ExLuna-rs">github.com/ExLuna-rs</a></p>
+      </main>
+    </noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
