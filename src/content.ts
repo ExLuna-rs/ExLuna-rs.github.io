@@ -6,7 +6,7 @@ export type L10n = Record<Lang, string>
 
 export const profile = {
   name: 'Corentin Janson',
-  handle: 'Ex_Luna',
+  handle: 'ExLuna-rs',
   github: 'https://github.com/ExLuna-rs',
   githubUser: 'ExLuna-rs',
   location: 'baguette Land',
@@ -17,13 +17,13 @@ export const profile = {
   } as L10n,
   about: {
     fr: [
-      "Salut, moi c'est Corentin Janson, alias Ex_Luna.",
+      "Salut, moi c'est Corentin Janson, alias ExLuna-rs.",
       "Ingénieur IT, je construis des outils qui vont du bas niveau (C++20, Rust) jusqu'à l'interface (Vue, React, Three.js).",
       'Mon terrain de jeu : la robotique industrielle, packager des apps desktop avec Tauri, et transformer des planètes en ASCII.',
       'Ce site est lui-même un projet : une scène Three.js rendue caractère par caractère, pilotable au clavier comme Neovim.',
     ],
     en: [
-      "Hi, I'm Corentin Janson, aka Ex_Luna.",
+      "Hi, I'm Corentin Janson, aka ExLuna-rs.",
       'IT engineer building tools from the low level (C++20, Rust) up to the interface (Vue, React, Three.js).',
       'My playground: industrial robotics, shipping desktop apps with Tauri, and turning planets into ASCII.',
       'This site is a project of its own: a Three.js scene rendered character by character, driven from the keyboard like Neovim.',

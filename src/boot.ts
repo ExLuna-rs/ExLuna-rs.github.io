@@ -2,13 +2,12 @@ import { profile, projects } from './content'
 import { t } from './i18n'
 
 const LOGO = String.raw`
- _____        _
-| ____|_  __ | |   _   _ _ __   __ _
-|  _| \ \/ / | |  | | | | '_ \ / _' |
-| |___ >  <  | |__| |_| | | | | (_| |
-|_____/_/\_\ |_____\__,_|_| |_|\__,_|
-          ______
-         |______|  ExLunaOS 1.0            `
+ _____      _
+| ____|_  _| |   _   _ _ __   __ _       _ __ ___
+|  _| \ \/ / |  | | | | '_ \ / _' |_____| '__/ __|
+| |___ >  <| |__| |_| | | | | (_| |_____| |  \__ \
+|_____/_/\_\_____\__,_|_| |_|\__,_|     |_|  |___/
+                                  ExLunaOS 1.0`
 
 // Fake boot log. Any key or click skips it.
 export function boot(): Promise<void> {

@@ -1,6 +1,6 @@
-# Ex_Luna — portfolio
+# ExLuna-rs — portfolio
 
-Portfolio de **Corentin Janson** (Ex_Luna) : un petit système solaire Three.js rendu en ASCII
+Portfolio de **Corentin Janson** (ExLuna-rs) : un petit système solaire Three.js rendu en ASCII
 en temps réel, piloté par un terminal et des raccourcis façon Neovim.
 
 ## Lancer

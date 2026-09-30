@@ -106,9 +106,9 @@ export function moonTextures(W = 1024, H = 512) {
     }
   }
 
-  // Easter egg: "Ex_Luna" carved in a mare, just like moon.py hides it.
+  // Easter egg: "ExLuna-rs" carved in a mare, just like moon.py hides it.
   const mw = 180, mh = 40
-  const mask = wordMask('Ex_Luna', mw, mh)
+  const mask = wordMask('ExLuna-rs', mw, mh)
   const ox = Math.floor(W * 0.2), oy = Math.floor(H * 0.44)
   for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
     const m = mask(x, y)
