@@ -51,8 +51,9 @@ export class Terminal {
       const b = (e.target as HTMLElement).closest<HTMLElement>('[data-run]')
       if (b) this.exec(b.dataset.run!, true)
     })
+    // Clicking the log focuses the prompt, but not on touch: no surprise keyboard.
     this.out.addEventListener('mouseup', () => {
-      if (!getSelection()?.toString()) this.focus()
+      if (!matchMedia('(pointer: coarse)').matches && !getSelection()?.toString()) this.focus()
     })
   }
 

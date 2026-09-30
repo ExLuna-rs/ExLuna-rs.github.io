@@ -56,7 +56,7 @@ export class World {
   aboutMode = false
   private userCell = 8
   readonly hologram = new Hologram(new THREE.Vector3(0, 1.97, 0))
-  private shift = 0
+  private shift = { x: 0, y: 0 }
 
   private timer = new THREE.Timer()
   private flight?: { from: THREE.Vector3; ctrl: THREE.Vector3; to: THREE.Vector3; tFrom: THREE.Vector3; tTo: THREE.Vector3; t: number; dur: number; index: number }
@@ -103,8 +103,8 @@ export class World {
   indexOf(id: string) { return this.bodies.findIndex(b => b.id === id) }
 
   // Shift the framing left by `px` so the target isn't hidden behind the terminal.
-  setShift(px: number) {
-    this.shift = px
+  setShift(x: number, y = 0) {
+    this.shift = { x, y }
     this.resize()
   }
 
@@ -123,7 +123,7 @@ export class World {
     this.aboutMode = true
     const dir = new THREE.Vector3().subVectors(this.viewpoint(this.bodies[0]), this.bodies[0].object.position).normalize()
     dir.y = 0.12
-    const to = this.hologram.center.clone().add(dir.normalize().multiplyScalar(3.5))
+    const to = this.hologram.center.clone().add(dir.normalize().multiplyScalar(3.5 * this.fit()))
     this.fly(0, to, this.hologram.center.clone())
     this.hologram.show()
   }
@@ -176,14 +176,20 @@ export class World {
     }
   }
 
+  // Portrait screens have a narrow horizontal FOV: back off so bodies fit.
+  private fit() {
+    const aspect = innerWidth / innerHeight
+    return aspect < 1 ? Math.pow(1 / aspect, 0.85) : 1
+  }
+
   private viewpoint(b: Body) {
     const dir = SUN.clone().multiplyScalar(0.55).add(new THREE.Vector3(-0.55, 0.22, 0.75)).normalize()
-    return b.object.position.clone().add(dir.multiplyScalar(b.radius * (b.kind === 'ringed' ? 6.8 : b.kind === 'station' ? 4.4 : 3.6)))
+    return b.object.position.clone().add(dir.multiplyScalar(b.radius * (b.kind === 'ringed' ? 6.8 : b.kind === 'station' ? 4.4 : 3.6) * this.fit()))
   }
 
   private applyLimits(b: Body) {
     this.controls.minDistance = b.radius * 1.6
-    this.controls.maxDistance = b.radius * 12
+    this.controls.maxDistance = b.radius * 12 * this.fit()
   }
 
   private addStars() {
@@ -285,7 +291,7 @@ export class World {
     this.renderer.setPixelRatio(dpr)
     this.renderer.setSize(innerWidth, innerHeight, false)
     this.camera.aspect = innerWidth / innerHeight
-    if (this.shift) this.camera.setViewOffset(innerWidth, innerHeight, this.shift, 0, innerWidth, innerHeight)
+    if (this.shift.x || this.shift.y) this.camera.setViewOffset(innerWidth, innerHeight, this.shift.x, this.shift.y, innerWidth, innerHeight)
     else this.camera.clearViewOffset()
     this.camera.updateProjectionMatrix()
     this.ascii.setSize(innerWidth, innerHeight, dpr)

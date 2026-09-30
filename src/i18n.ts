@@ -9,6 +9,7 @@ const dict = {
   'nav.prev': { fr: 'Précédent', en: 'Previous' },
   'nav.next': { fr: 'Suivant', en: 'Next' },
   'hint.mouse': { fr: 'glisser : orbiter · molette : zoom · clic : planète', en: 'drag: orbit · wheel: zoom · click: planet' },
+  'hint.touch': { fr: 'glisser : orbiter · pincer : zoom · toucher : planète', en: 'drag: orbit · pinch: zoom · tap: planet' },
   'hint.keys': { fr: 'j/k : naviguer · : commande · ? aide', en: 'j/k: navigate · : command · ? help' },
   'boot.skip': { fr: 'appuie sur une touche pour passer', en: 'press any key to skip' },
   'term.welcome': {

@@ -84,13 +84,13 @@ a { color: var(--accent); }
 /* ── terminal ────────────────────────────────────── */
 .term {
   position: fixed; z-index: 6; right: 22px; bottom: calc(var(--status-h) + 14px);
-  width: min(620px, calc(100vw - 44px)); height: min(430px, calc(100vh - 190px));
+  width: min(620px, calc(100vw - 44px)); height: min(430px, calc(100dvh - 190px));
   display: flex; flex-direction: column;
   background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(10px);
   box-shadow: 0 0 40px rgba(0, 0, 0, .6), 0 0 0 1px rgba(0, 0, 0, .4);
   transition: height .25s ease, width .25s ease;
 }
-.term.max { width: calc(100vw - 44px); height: calc(100vh - 140px); }
+.term.max { width: calc(100vw - 44px); height: calc(100dvh - 140px); }
 .term.min { height: 30px; }
 .term.min .term-out, .term.min .term-in { display: none; }
 .term-bar {
@@ -143,18 +143,38 @@ a { color: var(--accent); }
 .boot-log { margin: 0; color: var(--accent); font: 12px/1.45 var(--font); white-space: pre-wrap; }
 .boot-skip { margin-top: 18px; color: var(--dim); font-size: 11px; animation: blink 1.4s steps(1) infinite; }
 
+/* ── touch vs mouse hints ────────────────────────── */
+.hints .coarse { display: none; }
+@media (pointer: coarse) {
+  .hints .fine { display: none; }
+  .hints .coarse { display: block; }
+}
+
+/* ── compact: phones and portrait tablets ─────────── */
+@media (max-width: 1100px) and (orientation: portrait) {
+  .hints { display: none; }
+  .term { left: 12px; right: 12px; width: auto; bottom: calc(var(--status-h) + 60px); height: 40dvh; }
+  .term.max { width: auto; height: calc(100dvh - 220px); }
+  .pager { left: 50%; transform: translateX(-50%); bottom: calc(var(--status-h) + 12px); }
+  .label.current { display: none; } /* the HUD already names it, and it would collide with the header */
+}
+
 /* ── small screens ───────────────────────────────── */
 @media (max-width: 720px) {
   .hud-top { flex-direction: column; padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px 0; gap: 10px; }
   .nav { justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .nav > *, .nav button { flex: none; white-space: nowrap; }
+  .nav [data-nav="terminal"] { display: none; } /* the terminal has its own _ □ buttons */
+  .term-bar .actions button { width: 34px; height: 28px; }
+  .statusline .mode { padding: 0 8px; }
   .menu-wrap { position: static; }
   .menu { top: auto; margin-top: 4px; }
-  .nav > button, .menu-wrap > button { padding: 5px 8px; font-size: 12px; }
+  .nav > button, .menu-wrap > button { padding: 6px 8px; font-size: 12px; }
   .menu { left: 0; right: auto; }
   .hints, .statusline .path { display: none; }
-  .term { left: 8px; right: 8px; width: auto; bottom: calc(var(--status-h) + 56px); height: 46vh; }
-  .term.max { width: auto; height: calc(100vh - 200px); }
-  .pager { left: 50%; transform: translateX(-50%); bottom: calc(var(--status-h) + 10px); }
+  .term { left: 8px; right: 8px; bottom: calc(var(--status-h) + 56px); height: 42dvh; font-size: 12px; }
+  .term-in input { font-size: 16px; } /* >=16px: iOS won't zoom on focus */
+  .pager { bottom: calc(var(--status-h) + 10px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

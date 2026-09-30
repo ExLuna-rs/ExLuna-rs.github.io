@@ -108,6 +108,7 @@ export function registerCommands(app: App) {
     name: 'about', aliases: ['whoami'],
     desc: () => (fr() ? 'qui suis-je' : 'who am I'),
     run: () => {
+      app.setTerminal('open')
       world.showAbout()
       term.lines([...homeCard().slice(0, 2), '', ...L(profile.about).map(md)])
       T(dim(fr() ? '» hologramme projeté au-dessus de la Lune. `goto home` pour le couper.' : '» hologram projected above the Moon. `goto home` to switch it off.').replace(/`([^`]+)`/g, (_, c) => cmd(c)))

@@ -41,11 +41,15 @@ async function main() {
     },
   }
 
-  // Keep the current body visible beside the open terminal (desktop only).
+  // Keep the current body visible beside (desktop) or above (compact) the open terminal.
+  const compact = matchMedia('(max-width: 720px), (orientation: portrait) and (max-width: 1100px)')
   const reframe = () => {
     const open = !termEl.classList.contains('min') && !termEl.classList.contains('max')
-    world.setShift(open && innerWidth >= 720 ? (termEl.offsetWidth + 22) / 2 : 0)
+    if (!open) world.setShift(0)
+    else if (compact.matches) world.setShift(0, (termEl.offsetHeight + 40) / 2)
+    else world.setShift((termEl.offsetWidth + 22) / 2)
   }
+  compact.addEventListener('change', reframe)
   addEventListener('resize', reframe)
 
   try {
@@ -71,6 +75,8 @@ async function main() {
     term.setHost(i === 0 ? 'luna' : b.id, i === 0 ? '~' : `~/projects/${b.id}`)
     history.replaceState(null, '', i === 0 ? location.pathname : `#${b.id}`)
     if (world.aboutMode) return
+    // On small screens the terminal is the info panel: bring it up with the card.
+    if (compact.matches && termEl.classList.contains('min')) app.setTerminal('open')
     const p = projects.find(p => p.id === b.id)
     term.print('')
     term.lines(p ? projectCard(p) : homeCard())
@@ -82,7 +88,6 @@ async function main() {
     term.print(md(t('term.welcome')))
   }
 
-  if (innerWidth < 720) app.setTerminal('min')
   reframe()
   // The boot log plays once per session; `reboot` replays it.
   let booted = false
