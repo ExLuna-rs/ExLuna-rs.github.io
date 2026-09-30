@@ -104,8 +104,16 @@ export class World {
 
   // Shift the framing left by `px` so the target isn't hidden behind the terminal.
   setShift(x: number, y = 0) {
+    if (x === this.shift.x && y === this.shift.y) return
     this.shift = { x, y }
-    this.resize()
+    this.updateProjection()
+  }
+
+  private updateProjection() {
+    this.camera.aspect = innerWidth / innerHeight
+    if (this.shift.x || this.shift.y) this.camera.setViewOffset(innerWidth, innerHeight, this.shift.x, this.shift.y, innerWidth, innerHeight)
+    else this.camera.clearViewOffset()
+    this.camera.updateProjectionMatrix()
   }
 
   goto(index: number) {
@@ -290,10 +298,7 @@ export class World {
     const dpr = Math.min(devicePixelRatio, 2)
     this.renderer.setPixelRatio(dpr)
     this.renderer.setSize(innerWidth, innerHeight, false)
-    this.camera.aspect = innerWidth / innerHeight
-    if (this.shift.x || this.shift.y) this.camera.setViewOffset(innerWidth, innerHeight, this.shift.x, this.shift.y, innerWidth, innerHeight)
-    else this.camera.clearViewOffset()
-    this.camera.updateProjectionMatrix()
+    this.updateProjection()
     this.ascii.setSize(innerWidth, innerHeight, dpr)
   }
 

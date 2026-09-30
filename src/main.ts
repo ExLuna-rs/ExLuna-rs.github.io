@@ -51,6 +51,10 @@ async function main() {
   }
   compact.addEventListener('change', reframe)
   addEventListener('resize', reframe)
+  // Follow the terminal's real size, including while it animates to/from full screen.
+  // It also keeps the log pinned to the latest output when the panel changes size.
+  const log = termEl.querySelector<HTMLElement>('.term-out')!
+  new ResizeObserver(() => { reframe(); log.scrollTop = log.scrollHeight }).observe(termEl)
 
   try {
     const saved = localStorage.getItem('exluna.theme') as ThemeName | null
