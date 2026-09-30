@@ -12,6 +12,7 @@ const dict = {
   'hint.touch': { fr: 'glisser : orbiter · pincer : zoom · toucher : planète', en: 'drag: orbit · pinch: zoom · tap: planet' },
   'hint.keys': { fr: 'j/k : naviguer · : commande · ? aide', en: 'j/k: navigate · : command · ? help' },
   'boot.skip': { fr: 'appuie sur une touche pour passer', en: 'press any key to skip' },
+  'boot.skip.touch': { fr: 'touche l’écran pour passer', en: 'tap to skip' },
   'term.welcome': {
     fr: 'Bienvenue sur ExLunaOS. Tape `help` ou clique sur une commande.',
     en: 'Welcome to ExLunaOS. Type `help` or click a command.',

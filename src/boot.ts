@@ -14,7 +14,7 @@ export function boot(): Promise<void> {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches
   const el = document.createElement('div')
   el.id = 'boot'
-  el.innerHTML = `<pre class="boot-log"></pre><div class="boot-skip">${t('boot.skip')}</div>`
+  el.innerHTML = `<pre class="boot-log"></pre><div class="boot-skip">${t(matchMedia('(pointer: coarse)').matches ? 'boot.skip.touch' : 'boot.skip')}</div>`
   document.body.appendChild(el)
   const log = el.querySelector('pre')!
 
