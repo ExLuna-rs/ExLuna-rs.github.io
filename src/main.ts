@@ -70,6 +70,7 @@ async function main() {
     const b = world.bodies[i]
     term.setHost(i === 0 ? 'luna' : b.id, i === 0 ? '~' : `~/projects/${b.id}`)
     history.replaceState(null, '', i === 0 ? location.pathname : `#${b.id}`)
+    if (world.aboutMode) return
     const p = projects.find(p => p.id === b.id)
     term.print('')
     term.lines(p ? projectCard(p) : homeCard())

@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { projects, type BodyKind } from '../content'
 import { AsciiPass } from './ascii'
+import { Hologram } from './hologram'
 import { bandedTexture, makeNoise, moonTextures, ringTexture } from './textures'
 
 export interface Body {
@@ -35,6 +36,9 @@ export class World {
   readonly bodies: Body[] = []
   current = 0
   fps = 60
+  aboutMode = false
+  private userCell = 8
+  readonly hologram = new Hologram(new THREE.Vector3(0, 1.97, 0))
   private shift = 0
 
   private timer = new THREE.Timer()
@@ -62,6 +66,7 @@ export class World {
 
     this.addStars()
     this.addBody('luna', 'Luna', 'moon')
+    this.scene.add(this.hologram.group)
     for (const p of projects) this.addBody(p.id, p.name, p.kind)
 
     const home = this.bodies[0]
@@ -88,16 +93,33 @@ export class World {
 
   goto(index: number) {
     const body = this.bodies[(index + this.bodies.length) % this.bodies.length]
-    const idx = this.bodies.indexOf(body)
+    if (this.aboutMode) this.ascii.setCellSize(this.userCell)
+    this.aboutMode = false
+    this.hologram.hide()
+    this.fly(this.bodies.indexOf(body), this.viewpoint(body), body.object.position.clone())
+  }
+
+  // Fly above the Moon and project the portrait hologram.
+  showAbout() {
+    // Finer glyphs while the portrait is up: faces need resolution.
+    if (!this.aboutMode) { this.userCell = this.ascii.cellSize; this.ascii.setCellSize(Math.min(this.userCell, 5)) }
+    this.aboutMode = true
+    const dir = new THREE.Vector3().subVectors(this.viewpoint(this.bodies[0]), this.bodies[0].object.position).normalize()
+    dir.y = 0.12
+    const to = this.hologram.center.clone().add(dir.normalize().multiplyScalar(3.5))
+    this.fly(0, to, this.hologram.center.clone())
+    this.hologram.show()
+  }
+
+  private fly(idx: number, to: THREE.Vector3, target: THREE.Vector3) {
     const from = this.camera.position.clone()
-    const to = this.viewpoint(body)
     const dist = from.distanceTo(to)
     const mid = from.clone().lerp(to, 0.5)
     const lift = new THREE.Vector3().subVectors(to, from).cross(new THREE.Vector3(0, 1, 0)).normalize().multiplyScalar(dist * 0.18)
     mid.add(lift).add(new THREE.Vector3(0, dist * 0.08, 0))
     this.flight = {
       from, ctrl: mid, to,
-      tFrom: this.controls.target.clone(), tTo: body.object.position.clone(),
+      tFrom: this.controls.target.clone(), tTo: target,
       t: 0, dur: reducedMotion ? 0.35 : THREE.MathUtils.clamp(dist / 22, 1.4, 3.2), index: idx,
     }
     this.controls.enabled = false
@@ -260,6 +282,7 @@ export class World {
     this.fps += (1 / Math.max(dt, 1e-3) - this.fps) * 0.05
 
     for (const b of this.bodies) if (!reducedMotion) b.object.rotation.y += b.spin * dt
+    this.hologram.update(dt, time, this.camera)
 
     if (this.flight) {
       const f = this.flight
