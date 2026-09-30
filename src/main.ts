@@ -32,6 +32,7 @@ async function main() {
       else if (state === 'min') termEl.classList.add('min')
       else { termEl.classList.remove('min'); if (state === 'max') termEl.classList.add('max') }
       if (termEl.classList.contains('min')) term.blur()
+      animating = getComputedStyle(termEl).transitionDuration !== '0s'
       reframe()
     },
     async reboot() {
@@ -43,18 +44,25 @@ async function main() {
 
   // Keep the current body visible beside (desktop) or above (compact) the open terminal.
   const compact = matchMedia('(max-width: 720px), (orientation: portrait) and (max-width: 1100px)')
-  const reframe = () => {
-    const open = !termEl.classList.contains('min') && !termEl.classList.contains('max')
-    if (!open) world.setShift(0)
-    else if (compact.matches) world.setShift(0, (termEl.offsetHeight + 40) / 2)
-    else world.setShift((termEl.offsetWidth + 22) / 2)
+  // Full screen keeps the current framing: the scene is covered anyway, no need to move it.
+  let animating = false
+  const reframe = (instant = false) => {
+    if (termEl.classList.contains('max')) return
+    if (termEl.classList.contains('min')) return world.setShift(0, 0, instant)
+    if (animating) return // mid-transition sizes are not the final ones
+    if (compact.matches) world.setShift(0, (termEl.offsetHeight + 40) / 2, instant)
+    else world.setShift((termEl.offsetWidth + 22) / 2, 0, instant)
   }
-  compact.addEventListener('change', reframe)
-  addEventListener('resize', reframe)
-  // Follow the terminal's real size, including while it animates to/from full screen.
-  // It also keeps the log pinned to the latest output when the panel changes size.
+  termEl.addEventListener('transitionend', e => {
+    if (e.target !== termEl) return
+    animating = false
+    reframe()
+  })
+  compact.addEventListener('change', () => reframe(true))
+  addEventListener('resize', () => reframe(true))
+  // Keep the log pinned to the latest output when the panel changes size.
   const log = termEl.querySelector<HTMLElement>('.term-out')!
-  new ResizeObserver(() => { reframe(); log.scrollTop = log.scrollHeight }).observe(termEl)
+  new ResizeObserver(() => { log.scrollTop = log.scrollHeight }).observe(termEl)
 
   try {
     const saved = localStorage.getItem('exluna.theme') as ThemeName | null
@@ -92,7 +100,7 @@ async function main() {
     term.print(md(t('term.welcome')))
   }
 
-  reframe()
+  reframe(true)
   // The boot log plays once per session; `reboot` replays it.
   let booted = false
   try { booted = sessionStorage.getItem('exluna.booted') === '1'; sessionStorage.setItem('exluna.booted', '1') } catch { /* storage blocked */ }

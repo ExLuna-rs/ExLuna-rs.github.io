@@ -57,6 +57,7 @@ export class World {
   private userCell = 8
   readonly hologram = new Hologram(new THREE.Vector3(0, 1.97, 0))
   private shift = { x: 0, y: 0 }
+  private shiftTarget = { x: 0, y: 0 }
 
   private timer = new THREE.Timer()
   private flight?: { from: THREE.Vector3; ctrl: THREE.Vector3; to: THREE.Vector3; tFrom: THREE.Vector3; tTo: THREE.Vector3; t: number; dur: number; index: number }
@@ -103,10 +104,10 @@ export class World {
   indexOf(id: string) { return this.bodies.findIndex(b => b.id === id) }
 
   // Shift the framing left by `px` so the target isn't hidden behind the terminal.
-  setShift(x: number, y = 0) {
-    if (x === this.shift.x && y === this.shift.y) return
-    this.shift = { x, y }
-    this.updateProjection()
+  // Framing offset (px) that keeps the target clear of the terminal; eased in the loop.
+  setShift(x: number, y = 0, instant = false) {
+    this.shiftTarget = { x, y }
+    if (instant || reducedMotion) { this.shift = { x, y }; this.updateProjection() }
   }
 
   private updateProjection() {
@@ -311,6 +312,13 @@ export class World {
 
     for (const b of this.bodies) if (!reducedMotion) b.object.rotation.y += b.spin * dt
     this.hologram.update(dt, time, this.camera)
+
+    const sx = this.shiftTarget.x - this.shift.x, sy = this.shiftTarget.y - this.shift.y
+    if (Math.abs(sx) + Math.abs(sy) > 0.1) {
+      const k = Math.min(1, dt * 7)
+      this.shift = { x: this.shift.x + sx * k, y: this.shift.y + sy * k }
+      this.updateProjection()
+    }
 
     if (this.flight) {
       const f = this.flight
