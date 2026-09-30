@@ -26,7 +26,18 @@ Liens directs : `/#g-lib`, `/#herdr`, `/#ascii-cosmos`.
 ## Modifier le contenu
 
 Tout le texte (profil, projets, compétences) est dans [`src/content.ts`](src/content.ts).
-Ajouter un projet = ajouter une entrée + sa position dans `PLACEMENT` (`src/scene/world.ts`).
+
+### Projets automatiques
+
+Chaque build (`scripts/sync-repos.ts`) récupère les dépôts publics de `ExLuna-rs` via l'API
+GitHub dans `src/generated/repos.json`. Tout dépôt public qui n'a pas de fiche écrite à la main
+devient une planète (apparence et orbite dérivées de son nom) avec sa description, son langage
+et ses topics. Le site est reconstruit chaque nuit, ou à la main via *Actions → Run workflow*.
+
+- Masquer un dépôt : lui ajouter le topic GitHub `no-portfolio`.
+- Soigner une fiche : l'ajouter dans `curated` (`src/content.ts`) avec `repo` = l'URL du dépôt ;
+  elle remplace alors la fiche automatique.
+- Forks, dépôts archivés et privés sont ignorés. `bun run sync` rafraîchit la liste en local.
 
 ## Structure
 

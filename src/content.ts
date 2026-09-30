@@ -1,5 +1,11 @@
 // All portfolio content lives here. Edit freely: the terminal, the HUD and the
 // navigation bar are generated from this file.
+//
+// Hand-written projects come first. Any other public GitHub repo (fetched at
+// build time into generated/repos.json) is appended automatically; add the
+// topic `no-portfolio` to a repo to hide it.
+
+import repos from './generated/repos.json'
 
 export type Lang = 'fr' | 'en'
 export type L10n = Record<Lang, string>
@@ -43,9 +49,11 @@ export interface Project {
   note?: L10n
   summary: L10n
   details: Record<Lang, string[]>
+  seed?: number
+  auto?: boolean
 }
 
-export const projects: Project[] = [
+const curated: Project[] = [
   {
     id: 'g-lib',
     name: 'G-Lib',
@@ -117,6 +125,49 @@ export const projects: Project[] = [
       ],
     },
   },
+]
+
+const hash = (s: string) => [...s].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261)
+const AUTO_KINDS: BodyKind[] = ['banded', 'rocky', 'station', 'banded', 'rocky']
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
+function fromRepo(r: (typeof repos)[number]): Project {
+  const h = hash(r.name)
+  const seen = new Set<string>()
+  const stack = [r.language, ...r.topics]
+    .filter((x): x is string => !!x && !seen.has(x.toLowerCase()) && !!seen.add(x.toLowerCase()))
+    .slice(0, 6)
+  const date = (iso: string, l: Lang) => new Date(iso).toLocaleDateString(l === 'fr' ? 'fr-FR' : 'en-GB', { month: 'long', year: 'numeric' })
+  const desc = r.description || ''
+  return {
+    id: slug(r.name),
+    name: r.name,
+    kind: AUTO_KINDS[h % AUTO_KINDS.length],
+    year: r.created.slice(0, 4),
+    stack: stack.length ? stack : ['code'],
+    repo: r.url,
+    seed: h,
+    auto: true,
+    summary: { fr: desc || 'Dépôt public sur GitHub.', en: desc || 'Public repository on GitHub.' },
+    details: {
+      fr: [
+        `Dernière mise à jour : ${date(r.pushed, 'fr')}.`,
+        ...(r.stars ? [`${r.stars} étoile${r.stars > 1 ? 's' : ''} sur GitHub.`] : []),
+        ...(r.homepage ? [`Site : ${r.homepage}`] : []),
+      ],
+      en: [
+        `Last updated: ${date(r.pushed, 'en')}.`,
+        ...(r.stars ? [`${r.stars} star${r.stars > 1 ? 's' : ''} on GitHub.`] : []),
+        ...(r.homepage ? [`Website: ${r.homepage}`] : []),
+      ],
+    },
+  }
+}
+
+const known = new Set(curated.map(p => p.repo?.toLowerCase()).filter(Boolean))
+export const projects: Project[] = [
+  ...curated,
+  ...repos.filter(r => !known.has(r.url.toLowerCase())).map(fromRepo),
 ]
 
 export const skills: Record<string, string[]> = {

@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "sync": "bun scripts/sync-repos.ts",
+    "build": "bun scripts/sync-repos.ts && tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

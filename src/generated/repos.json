@@ -1,0 +1,47 @@
+[
+  {
+    "name": "herdr-git-tree",
+    "description": "Interactive git graph with real-time diffs and branch management — herdr plugin",
+    "language": "Rust",
+    "topics": [
+      "git",
+      "herdr",
+      "herdr-plugin",
+      "rust",
+      "tui"
+    ],
+    "url": "https://github.com/ExLuna-rs/herdr-git-tree",
+    "homepage": null,
+    "stars": 0,
+    "created": "2026-09-30T19:22:47Z",
+    "pushed": "2026-09-30T19:31:14Z"
+  },
+  {
+    "name": "herdr-auto-layout",
+    "description": "Declarative layouts applied to every new workspace — cross-platform herdr plugin",
+    "language": "Rust",
+    "topics": [
+      "herdr",
+      "herdr-plugin",
+      "layout",
+      "rust",
+      "terminal"
+    ],
+    "url": "https://github.com/ExLuna-rs/herdr-auto-layout",
+    "homepage": null,
+    "stars": 0,
+    "created": "2026-09-30T14:19:29Z",
+    "pushed": "2026-09-30T19:52:33Z"
+  },
+  {
+    "name": "G-Lib",
+    "description": "Bibliotheque de jeux unifiee pour Steam, Epic, EA et Ubisoft Connect : scan local, une seule grille, lancement en un clic.",
+    "language": "TypeScript",
+    "topics": [],
+    "url": "https://github.com/ExLuna-rs/G-Lib",
+    "homepage": null,
+    "stars": 0,
+    "created": "2026-09-05T12:47:27Z",
+    "pushed": "2026-09-14T19:38:07Z"
+  }
+]

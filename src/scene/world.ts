@@ -24,6 +24,23 @@ const PLACEMENT: Record<string, { pos: [number, number, number]; radius: number 
   'ascii-cosmos': { pos: [26, 3, -30], radius: 3.4 },
 }
 
+// New repos get a deterministic slot on an outer golden-angle spiral.
+function autoPlacement(seed: number, index: number) {
+  const a = index * 2.39996 + 0.7
+  const d = 38 + index * 7
+  return {
+    pos: [Math.cos(a) * d, ((seed % 17) - 8) * 0.9, Math.sin(a) * d] as [number, number, number],
+    radius: 1.3 + (seed % 100) / 100 * 1.4,
+  }
+}
+
+const PALETTES = [
+  ['#1d3b6e', '#3f7fbf', '#9fd3f0', '#2b5c99', '#d8f0ff'],
+  ['#5b2a1e', '#c0643b', '#f0b27a', '#8e3b24', '#ffe0c2'],
+  ['#1f4a2c', '#4f9a5c', '#b8e0a0', '#2e6b3a', '#e8ffd8'],
+  ['#3a1f5c', '#7b4fb0', '#d0b0f0', '#553080', '#f0e0ff'],
+]
+
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
@@ -67,7 +84,7 @@ export class World {
     this.addStars()
     this.addBody('luna', 'Luna', 'moon')
     this.scene.add(this.hologram.group)
-    for (const p of projects) this.addBody(p.id, p.name, p.kind)
+    projects.forEach((p, i) => this.addBody(p.id, p.name, p.kind, p.seed ?? i))
 
     const home = this.bodies[0]
     this.camera.position.copy(this.viewpoint(home))
@@ -183,8 +200,8 @@ export class World {
     this.scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 2.2, sizeAttenuation: false })))
   }
 
-  private addBody(id: string, name: string, kind: BodyKind) {
-    const { pos, radius } = PLACEMENT[id] ?? { pos: [0, 0, -40], radius: 2 }
+  private addBody(id: string, name: string, kind: BodyKind, seed = 0) {
+    const { pos, radius } = PLACEMENT[id] ?? autoPlacement(seed, this.bodies.length)
     const group = new THREE.Group()
     group.position.set(...pos)
     let spin = 0.02
@@ -218,7 +235,7 @@ export class World {
     } else if (kind === 'banded') {
       group.add(new THREE.Mesh(
         new THREE.SphereGeometry(radius, 96, 64),
-        new THREE.MeshStandardMaterial({ map: bandedTexture(23, ['#1d3b6e', '#3f7fbf', '#9fd3f0', '#2b5c99', '#d8f0ff']), roughness: 0.9 }),
+        new THREE.MeshStandardMaterial({ map: bandedTexture(23 + seed, PALETTES[seed % PALETTES.length]), roughness: 0.9 }),
       ))
       spin = 0.08
     } else if (kind === 'station') {
@@ -246,7 +263,7 @@ export class World {
     } else {
       // Rocky: a lumpy asteroid.
       const geo = new THREE.IcosahedronGeometry(radius, 5)
-      const n = makeNoise(9)
+      const n = makeNoise(9 + seed)
       const p = geo.attributes.position as THREE.BufferAttribute
       const v = new THREE.Vector3()
       for (let i = 0; i < p.count; i++) {
